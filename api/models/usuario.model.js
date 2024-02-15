@@ -25,8 +25,6 @@ const Usuario = sequelize.define(
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
     },
     sexo: {
       type: DataTypes.STRING,
@@ -36,9 +34,8 @@ const Usuario = sequelize.define(
     },
     dni: {
       type: DataTypes.STRING,
-    },
-    dni: {
-      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
     },
     fechaAlta: {
       type: DataTypes.DATE,

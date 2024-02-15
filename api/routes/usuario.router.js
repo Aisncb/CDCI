@@ -1,5 +1,5 @@
 const router = require('express').Router(),
-    { getAllUsers, getOneUser, getProfile, createUser, updateUser, deleteUser, updateProfile, updatePassword } = require('../controllers/user.controller.js'),
+    { getAllUsers, getOneUser, getProfile, createUser, updateUser, deleteUser, updateProfile, updatePassword } = require('../controllers/usuario.controller.js'),
     { checkAuth, checkAdmin } = require('../middleware');
 
 router.get('/', checkAuth, checkAdmin, getAllUsers)
