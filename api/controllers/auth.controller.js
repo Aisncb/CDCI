@@ -16,13 +16,14 @@ async function login(req, res) {
     const comparePass = bcrypt.compareSync(req.body.password, usuario.password); // comparamos la contraseña enviada sin encriptar con la encriptada en la base de datos
 
     if (comparePass) {
-      const payload = { dni: user.dni }; // información que incluimos en el token
+      const payload = { dni: usuario.dni }; // información que incluimos en el token
       const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "1h" }); // generamos el token
       return res.status(200).send({ token: token, role: usuario.rol });
     } else {
       return res.status(404).json("Error: DNI o Contraseña incorrecta");
     }
   } catch (error) {
+    console.log(req.body)
     return res.status(500).send(error.message);
   }
 }
@@ -52,7 +53,7 @@ async function signup(req, res) {
   } catch (error) {
     res.status(500).send({
       error: error.message,
-      msg: "Se ha producido un error al procesar su petición. +Info: Esto puede deberse a que el correo electrónico proporcionado ya exista en la base de datos, o por otra razón desconocida.",
+      msg: "Se ha producido un error al procesar su petición. +Info: Esto puede deberse a que el dni proporcionado ya exista en la base de datos, o por otra razón desconocida.",
     });
   }
 }

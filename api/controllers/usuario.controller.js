@@ -1,20 +1,20 @@
-const User = require("../models/usuario.model.js"),
+const Usuario = require("../models/usuario.model.js"),
   jwt = require("jsonwebtoken"),
   bcrypt = require("bcrypt"),
   { validatePassword } = require("../controllers/auth.controller.js");
 
 async function getAllUsers(req, res) {
   try {
-    const users = await User.findAll({
+    const usuarios = await Usuario.findAll({
       // Filtering with the «where» clause in case query
       // params are passed as arguments.
       where: req.query,
       paranoid: false,
     });
-    if (users) {
-      return res.status(200).json({ users: users });
+    if (usuarios) {
+      return res.status(200).json({ usuarios: usuarios });
     } else {
-      return res.status(404).send("No users found.");
+      return res.status(404).send("No usuarios found.");
     }
   } catch (error) {
     res.status(500).send(error.message);
@@ -23,11 +23,11 @@ async function getAllUsers(req, res) {
 
 async function getOneUser(req, res) {
   try {
-    const user = await User.findByPk(req.params.id);
-    if (user) {
-      return res.status(200).json({ user: user });
+    const usuario = await Usuario.findByPk(req.params.id);
+    if (usuario) {
+      return res.status(200).json({ usuario: usuario });
     } else {
-      return res.status(404).send("User not found.");
+      return res.status(404).send("Usuario no encontrado.");
     }
   } catch (error) {
     res.status(500).send(error.message);
@@ -36,11 +36,11 @@ async function getOneUser(req, res) {
 
 async function getProfile(req, res) {
   try {
-    const user = await User.findByPk(res.locals.user.id);
-    if (!user) {
-      res.status(404).send("User not found");
+    const usuario = await Usuario.findByPk(res.locals.usuario.id);
+    if (!usuario) {
+      res.status(404).send("Usuario no encontrado.");
     }
-    res.status(200).json(user);
+    res.status(200).json(usuario);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -48,10 +48,10 @@ async function getProfile(req, res) {
 
 async function createUser(req, res) {
   try {
-    const user = await User.create(req.body);
+    const usuario = await Usuario.create(req.body);
     return res
       .status(200)
-      .json({ message: "User successfully created!", user: user });
+      .json({ message: "¡Usuario creado correctamente!", user: user });
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -61,9 +61,9 @@ async function updateUser(req, res) {
   try {
     // Before trying to update the user, we have to
     // check in the database if he/she exists:
-    const user = await User.findByPk(req.params.id);
-    if (user) {
-      const [userUpdated] = await User.update(req.body, {
+    const usuario = await Usuario.findByPk(req.params.id);
+    if (usuario) {
+      const [userUpdated] = await Usuario.update(req.body, {
         where: {
           id: req.params.id,
         },
@@ -73,17 +73,17 @@ async function updateUser(req, res) {
         // If we tried to use the variable «user.dataValues» here,
         // we would not get the updated values for the user being processed
         // but their former data:
-        return res.status(200).send("User successfully updated!");
+        return res.status(200).send("¡Usuario actualizado!");
       } else {
         // Here, however, we can use the variable as their data has not changed:
         return res.status(500).json({
           message:
-            "User cannot be updated. +Info: He/She already has those values!",
-          user: user,
+            "El usuario no se puede actualizar. +Info: ¡Él/Ella ya tiene esos valores!",
+          usuario: usuario,
         });
       }
     } else {
-      return res.status(404).send("User not found.");
+      return res.status(404).send("Usuario no encontrado");
     }
   } catch (error) {
     return res.status(500).send(error.message);
@@ -94,34 +94,34 @@ async function updateProfile(req, res) {
   try {
     // Before trying to update the user, we have to
     // check in the database if he/she exists:
-    const user = await User.findByPk(res.locals.user.id);
-    if (user) {
-      if (req.body.role !== undefined) {
+    const usuario = await Usuario.findByPk(res.locals.usuario.id);
+    if (usuario) {
+      if (req.body.rol !== undefined) {
         return res
           .status(500)
-          .send("You cannot modify your role. +Info: Contact an admin.");
+          .send("Usted no puede modoficar el rol. +Info: Contacta con el administrador.");
       } else {
-        const [userUpdated] = await User.update(req.body, {
+        const [userUpdated] = await Usuario.update(req.body, {
           where: {
-            id: res.locals.user.id,
+            id: res.locals.usuario.id,
           },
         });
         if (userUpdated !== 0) {
           // If we tried to use the variable «user.dataValues» here,
           // we would not get the updated values for the user being processed
           // but their former data:
-          return res.status(200).send("User successfully updated!");
+          return res.status(200).send("Usuario Actualizado!");
         } else {
           // Here, however, we can use the variable as their data has not changed:
           return res.status(500).json({
             message:
-              "User cannot be updated. +Info: You already have that/those value/s!",
-            user: user,
+              "El usuario no se puede actualizar. +Info: ¡Usted ya tiene esos valores!!",
+            usuario: usuario,
           });
         }
       }
     } else {
-      return res.status(404).send("User not found.");
+      return res.status(404).send("Usuario no encontrado.");
     }
   } catch (error) {
     return res.status(500).send(error.message);
@@ -130,19 +130,19 @@ async function updateProfile(req, res) {
 
 async function updatePassword(req, res) {
   try {
-    const user = await User.findByPk(res.locals.user.id);
-    if (user) {
+    const usuario = await Usuario.findByPk(res.locals.usuario.id);
+    if (usuario) {
       // First of all, password validation:
       if (validatePassword(req.body.password)) {
         // compareSync function will be checking if the password the user passes
         // in the body request (decrypted) equals the password the user has stored
         // in the database (encrypted):
-        if (bcrypt.compareSync(req.body.password, user.password)) {
+        if (bcrypt.compareSync(req.body.password, usuario.password)) {
           // After the process, if they are equal, the following message will be displayed:
           return res.status(500).json({
             message:
-              "Password cannot be updated. +Info: You already have that password!",
-            user: user,
+              "La contraseña no se pueda actualizar. +Info: Usted ya tiene esta contraseña!",
+            usuario: usuario,
           });
         } else {
           // However, if they are different, the decrypted password will be encrypted and
@@ -152,24 +152,24 @@ async function updatePassword(req, res) {
             ),
             hashedPassword = bcrypt.hashSync(req.body.password, saltRounds);
           req.body.password = hashedPassword;
-          const payload = { email: res.locals.user.email },
+          const payload = { email: res.locals.usuario.email },
             token = jwt.sign(payload, process.env.SECRET, { expiresIn: "1h" }),
-            [passwordUpdated] = await User.update(req.body, {
+            [passwordUpdated] = await Usuario.update(req.body, {
               where: {
-                id: res.locals.user.id,
+                id: res.locals.usuario.id,
               },
             });
 
           if (passwordUpdated !== 0) {
             return res.status(200).json({
-              message: "Your password has been successfully updated!",
+              message: "Su contraseña se ha actualizado!",
               token: token,
             });
           } else {
             return res.status(500).json({
               message:
-                "Password cannot be updated. +Info: You already have that password!",
-              user: user,
+                "La contraseña no se ha podido actualizar. +Info: Usted tiene esta contraseña!",
+              usuario: usuario,
             });
           }
         }
@@ -177,11 +177,11 @@ async function updatePassword(req, res) {
         return res
           .status(500)
           .send(
-            "Password not valid. +Info: Passwords must have a length equal to eight or more characters including, at least, one letter (either upper or lower case) and one number."
+            "Contraseña no validad. +Info: Las contraseñas deben tener una longitud igual a ocho o más caracteres incluyendo, al menos, una letra (ya sea mayúscula o minúscula) y un número.."
           );
       }
     } else {
-      return res.status(404).send("User not found.");
+      return res.status(404).send("Usuario no encontrado.");
     }
   } catch (error) {
     return res.status(500).send(error.message);
@@ -190,17 +190,17 @@ async function updatePassword(req, res) {
 
 async function deleteUser(req, res) {
   try {
-    const user = await User.destroy({
+    const usuario = await Usuario.destroy({
       where: {
         id: req.params.id,
       },
     });
-    if (user) {
+    if (usuario) {
       return res
         .status(200)
-        .json({ message: "User successfully deleted!", user: user });
+        .json({ message: "Usuario eliminado!", user: user });
     } else {
-      return res.status(404).send("User not found.");
+      return res.status(404).send("Usuario no encontrado.");
     }
   } catch (error) {
     return res.status(500).send(error.message);
