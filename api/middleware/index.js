@@ -27,6 +27,15 @@ function checkAdmin(req, res, next) { // Checking if the user has access or not 
     }
 }
 
+function checkGestorAdmin(req, res, next) { // Checking if the user has access or not to the resource 
+  // they are requesting (they will be given access depending on their role):
+  if (res.locals.usuario.rol !== 'administrador' || 'gestor') {
+      return res.status(401).send('Usuario no autorizado')
+  } else {
+      next()
+  }
+}
+
 function getYesterdaysDate() {
   const date = new Date();
   let yesterdaysYear, yesterdaysMonth, yesterdaysDay;
@@ -50,6 +59,7 @@ function validatePassword(password) {
 module.exports = {
   checkAuth,
   checkAdmin,
+  checkGestorAdmin,
   getYesterdaysDate,
   validatePassword,
 };
