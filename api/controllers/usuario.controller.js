@@ -198,7 +198,7 @@ async function deleteUser(req, res) {
     if (usuario) {
       return res
         .status(200)
-        .json({ message: "Usuario eliminado!", user: user });
+        .json({ message: "Usuario eliminado!", usuario: usuario });
     } else {
       return res.status(404).send("Usuario no encontrado.");
     }
