@@ -11,7 +11,7 @@ const Noticia = sequelize.define(
     descripcion: {
       type: DataTypes.STRING
     },
-    archico: {
+    archivo: {
       type: DataTypes.STRING
     },
     imagen: {
