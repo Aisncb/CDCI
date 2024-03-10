@@ -4,7 +4,7 @@ const { getAllNoticias, getOneNoticia, createNoticia, updateNoticia, deleteNotic
 const { checkAuth, checkAdmin } = require('../middleware/index.js')
 
 // router.get('/', checkAuth, checkAdmin, getAllClassrooms)
-router.get('/', checkAuth, getAllNoticias)
+router.get('/', getAllNoticias)
 router.get('/:id', checkAuth, checkAdmin, getOneNoticia)
 router.post('/', checkAuth, checkAdmin, createNoticia)
 router.put('/:id', checkAuth, checkAdmin, updateNoticia)
